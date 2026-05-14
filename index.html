@@ -237,80 +237,70 @@
         </div>
     </div>
 
-    <script>
-        const urlAPI = "https://sheetdb.io/api/v1/e8xp2jsqqltvz"; 
-        const form = document.getElementById('form-iscrizione');
-        const contenitoreForm = document.getElementById('contenitore-form');
-        const messaggioChiuso = document.getElementById('messaggio-chiuso');
-        const messaggioSuccesso = document.getElementById('messaggio-successo');
-        const btnInvia = document.getElementById('btn-invia');
+<script>
+    const urlAPI = "https://sheetdb.io/api/v1/e8xp2jsqqltvz"; 
+    const form = document.getElementById('form-iscrizione');
+    const contenitoreForm = document.getElementById('contenitore-form');
+    const messaggioChiuso = document.getElementById('messaggio-chiuso');
+    const messaggioSuccesso = document.getElementById('messaggio-successo');
+    const btnInvia = document.getElementById('btn-invia');
 
-        // 1. Controllo al caricamento della pagina
-        fetch(urlAPI)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length >= 60) {
-                    contenitoreForm.classList.add('nascosto');
-                    messaggioChiuso.classList.remove('nascosto');
-                }
-            })
-            .catch(error => console.error("Errore nel controllo delle risposte:", error));
+    // 1. Controllo dei posti al caricamento della pagina
+    fetch(urlAPI)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length >= 60) {
+                contenitoreForm.classList.add('nascosto');
+                messaggioChiuso.classList.remove('nascosto');
+            }
+        })
+        .catch(error => console.error("Errore nel controllo delle risposte:", error));
 
-        // 2. Invio del form in background
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Blocca il ricaricamento della pagina
-            
-            // Disabilita il pulsante per evitare doppi click
-            btnInvia.disabled = true;
-            btnInvia.innerText = "Verifica posti e invio in corso...";
+    // 2. Quando premi il bottone, invia SUBITO la richiesta POST
+    form.addEventListener('submit', function(e) {
+        // e.preventDefault() è fondamentale: impedisce che la pagina si ricarichi o cambi
+        e.preventDefault(); 
+        
+        // Disabilita il bottone per evitare che l'utente clicchi due volte
+        btnInvia.disabled = true;
+        btnInvia.innerText = "Invio in corso...";
 
-            try {
-                // Controllo in tempo reale: verifichiamo di nuovo se i posti sono esauriti
-                const checkResponse = await fetch(urlAPI);
-                const currentData = await checkResponse.json();
+        // Prende in automatico tutti i valori inseriti nei campi <input>
+        const formData = new FormData(form);
+        const payload = {
+            data: [Object.fromEntries(formData.entries())]
+        };
 
-                if (currentData.length >= 60) {
-                    contenitoreForm.classList.add('nascosto');
-                    messaggioChiuso.classList.remove('nascosto');
-                    return; // Ferma l'esecuzione, non inviare i dati
-                }
-
-                // Prepara i dati del form
-                const formData = new FormData(form);
-                const payload = {
-                    data: [Object.fromEntries(formData.entries())]
-                };
-
-                // Effettua la richiesta POST
-                const postResponse = await fetch(urlAPI, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const postResult = await postResponse.json();
-
-                // Gestione della risposta
-                if (postResult.created === 1) {
-                    // Successo! Nascondi il form e mostra il messaggio di vittoria
-                    form.classList.add('nascosto');
-                    messaggioSuccesso.classList.remove('nascosto');
-                } else {
-                    throw new Error("Errore durante la creazione del record su SheetDB.");
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert("Si è verificato un errore di rete o di server. Riprova.");
-                // Riabilita il pulsante in caso di errore
+        // Invia la richiesta POST in background
+        fetch(urlAPI, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload) // Converte i dati nel formato richiesto da SheetDB
+        })
+        .then(response => response.json())
+        .then(risultato => {
+            // Se SheetDB risponde che ha creato la riga ("created": 1)
+            if (risultato.created === 1) {
+                // Nasconde il form e mostra il messaggio verde di successo!
+                form.classList.add('nascosto');
+                messaggioSuccesso.classList.remove('nascosto');
+            } else {
+                alert("Si è verificato un errore sul server. Riprova.");
                 btnInvia.disabled = false;
                 btnInvia.innerText = "Invia Iscrizione";
             }
+        })
+        .catch(error => {
+            console.error("Errore POST:", error);
+            alert("Errore di rete. Controlla la connessione e riprova.");
+            btnInvia.disabled = false;
+            btnInvia.innerText = "Invia Iscrizione";
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>
