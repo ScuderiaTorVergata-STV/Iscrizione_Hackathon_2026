@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon - Form con Limite Risposte</title>
+    <style>
+    
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #122d1e;
+            color: #f0f4f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #122c1e;
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #1b422d;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            color: white; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 25px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .descrizione {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: white;
+            margin-bottom: 30px;
+            background: rgba(168, 230, 207, 0.2);
+            padding: 15px;
+            border-left: 4px solid #00ff87;
+            border-radius: 4px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #1b422d, transparent);
+            margin: 25px 0;
+        }
+        
+        .nascosto { display: none !important; }
+        
+        .messaggio-blocco {
+            color: #ff4a4a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 74, 74, 0.1);
+            border: 1px solid #ff4a4a;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #0b1e14;
+            color: white;
+            border: 1px solid #2d5a41;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00ff87;
+            box-shadow: 0 0 8px rgba(0, 255, 135, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #00ff87;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #00cc6a;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        footer {
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            gap: 25px;
+            flex-wrap: wrap; 
+            margin-top: 30px;
+            padding-top: 15px;
+        }
+
+        footer img {
+            height: 40px; 
+            max-width: 120px;
+            object-fit: contain;
+            filter: grayscale(30%) brightness(90%);
+            transition: filter 0.3s;
+        }
+
+        footer img:hover {
+            filter: grayscale(0%) brightness(100%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Hackathon</h2>
+        <h3>DURATA:<br>Dal 22 Maggio 2026 alle 14:00 al 23 Maggio alle 09:00</h3>
+        
+        <p class="descrizione">
+            Ci vediamo al <strong>Lab25A</strong>!<br>
+            Arriva circa 15 minutes prima delle ore 14:00 insieme al tuo team. Chiedi ai responsabili, prendi posto e divertiti!<br><br>
+            <em>Si ricorda di essere presenti e puntuali alle 14:00 poiché ci saranno i rappresentanti di <strong>Oracle</strong> per iniziare il workshop!</em>
+        </p>
+        
+        <div id="messaggio-chiuso" class="nascosto messaggio-blocco">
+            Spiacenti, abbiamo raggiunto il limite massimo di 60 iscrizioni!
+        </div>
+        
+        <div id="contenitore-form">
+            <form action="https://sheetdb.io/api/v1/95xxxxxxxxx" method="POST">
+                
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="data[Nome]" required placeholder="Inserisci il tuo nome">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cognome">Cognome</label>
+                    <input type="text" id="cognome" name="data[Cognome]" required placeholder="Inserisci il tuo cognome">
+                </div>
+                    
+                <div class="form-group">
+                    <label for="matricola">Matricola</label>
+                    <input type="text" id="matricola" name="data[Matricola]" required placeholder="Es. 1234567">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail (Universitaria)</label>
+                    <input type="email" id="email" name="data[Email]" required placeholder="nome.cognome@uniroma2.it">
+                </div>
+                
+                <div class="form-group">
+                    <label for="team">Nome del tuo Team (Max 4 membri)</label>
+                    <input type="text" id="team" name="data[Team]" required placeholder="Inserisci il nome del team">
+                </div>
+                
+                <button type="submit">Invia Iscrizione</button>
+            </form>
+            
+            <hr>
+            
+            <footer>
+                <img src="Foto/LogoLab.jpg" alt="Logo Lab">
+                <img src="Foto/LogoScuderia.png" alt="Logo Scuderia Tor Vergata">
+                <img src="Foto/LogoOracle.png" alt="Logo Oracle">
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const urlAPI = "https://sheetdb.io/api/v1/95xxxxxxxxx"; 
+
+        fetch(urlAPI)
+            .then(response => response.json())
+            .then(data => {
+                // Se ci sono 60 o più righe, blocca il form
+                if (data.length >= 60) {
+                    document.getElementById('contenitore-form').classList.add('nascosto');
+                    document.getElementById('messaggio-chiuso').classList.remove('nascosto');
+                }
+            })
+            .catch(error => console.error("Errore nel controllo delle risposte:", error));
+    </script>
+
+</body>
+</html>
