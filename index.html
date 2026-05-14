@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hackathon - Form con Limite Risposte</title>
     <style>
-    
         * {
             box-sizing: border-box;
             margin: 0;
@@ -83,6 +82,18 @@
             margin: 20px 0;
         }
 
+        .messaggio-successo {
+            color: #00ff87;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 255, 135, 0.1);
+            border: 1px solid #00ff87;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -126,13 +137,20 @@
             margin-top: 15px;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background-color: #00cc6a;
             transform: translateY(-2px);
         }
 
-        button:active {
+        button:active:not(:disabled) {
             transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #2d5a41;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
         }
 
         footer {
@@ -173,36 +191,40 @@
         <div id="messaggio-chiuso" class="nascosto messaggio-blocco">
             Spiacenti, abbiamo raggiunto il limite massimo di 60 iscrizioni!
         </div>
+
+        <div id="messaggio-successo" class="nascosto messaggio-successo">
+            🎉 Iscrizione completata con successo! Ci vediamo all'Hackathon!
+        </div>
         
         <div id="contenitore-form">
-            <form action="https://sheetdb.io/api/v1/e8xp2jsqqltvz" method="POST">
+            <form id="form-iscrizione">
                 
                 <div class="form-group">
                     <label for="nome">Nome</label>
-                    <input type="text" id="nome" name="data[Nome]" required placeholder="Inserisci il tuo nome">
+                    <input type="text" id="nome" name="Nome" required placeholder="Inserisci il tuo nome">
                 </div>
                 
                 <div class="form-group">
                     <label for="cognome">Cognome</label>
-                    <input type="text" id="cognome" name="data[Cognome]" required placeholder="Inserisci il tuo cognome">
+                    <input type="text" id="cognome" name="Cognome" required placeholder="Inserisci il tuo cognome">
                 </div>
                     
                 <div class="form-group">
                     <label for="matricola">Matricola</label>
-                    <input type="text" id="matricola" name="data[Matricola]" required placeholder="Es. 1234567">
+                    <input type="text" id="matricola" name="Matricola" required placeholder="Es. 1234567">
                 </div>
                 
                 <div class="form-group">
                     <label for="email">E-mail (Universitaria)</label>
-                    <input type="email" id="email" name="data[Email]" required placeholder="nome.cognome@uniroma2.it">
+                    <input type="email" id="email" name="Email" required placeholder="nome.cognome@uniroma2.it">
                 </div>
                 
                 <div class="form-group">
                     <label for="team">Nome del tuo Team (Max 4 membri)</label>
-                    <input type="text" id="team" name="data[Team]" required placeholder="Inserisci il nome del team">
+                    <input type="text" id="team" name="Team" required placeholder="Inserisci il nome del team">
                 </div>
                 
-                <button type="submit">Invia Iscrizione</button>
+                <button type="submit" id="btn-invia">Invia Iscrizione</button>
             </form>
             
             <hr>
@@ -217,17 +239,77 @@
 
     <script>
         const urlAPI = "https://sheetdb.io/api/v1/e8xp2jsqqltvz"; 
+        const form = document.getElementById('form-iscrizione');
+        const contenitoreForm = document.getElementById('contenitore-form');
+        const messaggioChiuso = document.getElementById('messaggio-chiuso');
+        const messaggioSuccesso = document.getElementById('messaggio-successo');
+        const btnInvia = document.getElementById('btn-invia');
 
+        // 1. Controllo al caricamento della pagina
         fetch(urlAPI)
             .then(response => response.json())
             .then(data => {
-                // Se ci sono 60 o più righe, blocca il form
                 if (data.length >= 60) {
-                    document.getElementById('contenitore-form').classList.add('nascosto');
-                    document.getElementById('messaggio-chiuso').classList.remove('nascosto');
+                    contenitoreForm.classList.add('nascosto');
+                    messaggioChiuso.classList.remove('nascosto');
                 }
             })
             .catch(error => console.error("Errore nel controllo delle risposte:", error));
+
+        // 2. Invio del form in background
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Blocca il ricaricamento della pagina
+            
+            // Disabilita il pulsante per evitare doppi click
+            btnInvia.disabled = true;
+            btnInvia.innerText = "Verifica posti e invio in corso...";
+
+            try {
+                // Controllo in tempo reale: verifichiamo di nuovo se i posti sono esauriti
+                const checkResponse = await fetch(urlAPI);
+                const currentData = await checkResponse.json();
+
+                if (currentData.length >= 60) {
+                    contenitoreForm.classList.add('nascosto');
+                    messaggioChiuso.classList.remove('nascosto');
+                    return; // Ferma l'esecuzione, non inviare i dati
+                }
+
+                // Prepara i dati del form
+                const formData = new FormData(form);
+                const payload = {
+                    data: [Object.fromEntries(formData.entries())]
+                };
+
+                // Effettua la richiesta POST
+                const postResponse = await fetch(urlAPI, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const postResult = await postResponse.json();
+
+                // Gestione della risposta
+                if (postResult.created === 1) {
+                    // Successo! Nascondi il form e mostra il messaggio di vittoria
+                    form.classList.add('nascosto');
+                    messaggioSuccesso.classList.remove('nascosto');
+                } else {
+                    throw new Error("Errore durante la creazione del record su SheetDB.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Si è verificato un errore di rete o di server. Riprova.");
+                // Riabilita il pulsante in caso di errore
+                btnInvia.disabled = false;
+                btnInvia.innerText = "Invia Iscrizione";
+            }
+        });
     </script>
 
 </body>
