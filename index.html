@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #122d1e;
+            background-color: white;
             color: #f0f4f2;
             display: flex;
             justify-content: center;
@@ -245,13 +245,12 @@
     const messaggioSuccesso = document.getElementById('messaggio-successo');
     const btnInvia = document.getElementById('btn-invia');
 
-    // 1. Controllo iniziale: Posti esauriti o Utente ha già compilato su questo browser?
+    
     if (localStorage.getItem("iscrizioneCompletata") === "true") {
-        // Se ha già compilato, nascondi il form e mostra il successo
         contenitoreForm.classList.add('nascosto');
         messaggioSuccesso.classList.remove('nascosto');
     } else {
-        // Altrimenti, controlla quanti posti ci sono
+        
         fetch(urlAPI)
             .then(response => response.json())
             .then(data => {
@@ -263,7 +262,7 @@
             .catch(error => console.error("Errore nel controllo delle risposte:", error));
     }
 
-    // 2. Quando l'utente preme Invia
+    
     form.addEventListener('submit', async function(e) {
         e.preventDefault(); 
         
