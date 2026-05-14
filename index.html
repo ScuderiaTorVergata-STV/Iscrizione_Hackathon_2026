@@ -14,6 +14,7 @@
 
         body {
             background-image: url("Foto/Sfondo2.png");
+            opacity: 0.5;
             color: #f0f4f2;
             display: flex;
             justify-content: center;
@@ -89,7 +90,7 @@
             text-align: center;
             padding: 20px;
             background: rgba(0, 255, 135, 0.1);
-            border: 1px solid white;
+            border: 1px solid #F80000;
             border-radius: 8px;
             margin: 20px 0;
         }
@@ -126,7 +127,7 @@
         button {
             width: 100%;
             padding: 14px;
-            background-color: #F80000;
+            background-color: #b32020;
             color: black;
             border: none;
             border-radius: 8px;
@@ -138,7 +139,7 @@
         }
 
         button:hover:not(:disabled) {
-            background-color: #00cc6a;
+            background-color: #b32020;
             transform: translateY(-2px);
         }
 
@@ -167,12 +168,7 @@
             height: 50px; 
             max-width: 120px;
             object-fit: contain;
-            filter: grayscale(30%) brightness(90%);
             transition: filter 0.3s;
-        }
-
-        footer img:hover {
-            filter: grayscale(0%) brightness(100%);
         }
     </style>
 </head>
