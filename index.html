@@ -256,12 +256,6 @@
         
         fetch(urlAPI)
             .then(response => response.json())
-            .then(data => {
-                if (data.length >= 60) {
-                    contenitoreForm.classList.add('nascosto');
-                    messaggioChiuso.classList.remove('nascosto');
-                }
-            })
             .catch(error => console.error("Errore nel controllo delle risposte:", error));
     }
 
