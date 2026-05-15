@@ -252,13 +252,7 @@
     if (localStorage.getItem("iscrizioneCompletata") === "true") {
         contenitoreForm.classList.add('nascosto');
         messaggioSuccesso.classList.remove('nascosto');
-    } else {
-        
-        fetch(urlAPI)
-            .then(response => response.json())
-            .catch(error => console.error("Errore nel controllo delle risposte:", error));
     }
-
     
     form.addEventListener('submit', async function(e) {
         e.preventDefault(); 
