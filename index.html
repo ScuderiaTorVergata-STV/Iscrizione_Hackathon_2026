@@ -282,14 +282,7 @@
             const checkResponse = await fetch(urlAPI);
             const currentData = await checkResponse.json();
 
-            // A. Controllo limite 60 posti
-            if (currentData.length >= 60) {
-                contenitoreForm.classList.add('nascosto');
-                messaggioChiuso.classList.remove('nascosto');
-                return; // Blocca tutto
-            }
-
-            // B. Controllo DUPLICATI (Cerca se Email o Matricola esistono già)
+            // Controllo DUPLICATI (Cerca se Email o Matricola esistono già)
             const utenteGiaIscritto = currentData.some(riga => 
                 (riga.Email && riga.Email.toLowerCase() === emailInserita) || 
                 (riga.Matricola && riga.Matricola === matricolaInserita)
@@ -299,10 +292,9 @@
                 alert("Attenzione: Risulta già un'iscrizione con questa Email o Matricola!");
                 btnInvia.disabled = false;
                 btnInvia.innerText = "Invia Iscrizione";
-                return; // Blocca l'invio
+                return; 
             }
 
-            // C. Se i controlli sono passati, prepara la POST
             btnInvia.innerText = "Invio in corso...";
             
             const payload = {
@@ -321,7 +313,6 @@
             const postResult = await postResponse.json();
 
             if (postResult.created === 1) {
-                // Salva nel browser che l'utente si è iscritto
                 localStorage.setItem("iscrizioneCompletata", "true");
                 
                 form.classList.add('nascosto');
