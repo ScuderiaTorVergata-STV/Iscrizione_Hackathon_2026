@@ -263,7 +263,6 @@
         const formData = new FormData(form);
         const emailInserita = formData.get("Email").trim().toLowerCase();
         const matricolaInserita = formData.get("Matricola").trim();
-        const Corso_Appartenenza = formData.get("Corso_Appartenenza").trim();
 
         try {
             // Scarica i dati attuali da SheetDB per i controlli
